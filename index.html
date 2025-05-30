@@ -78,7 +78,6 @@
                 <nav class="flex space-x-2 sm:space-x-4 items-center">
                     <a href="#home" class="nav-link text-indigo-600 hover:text-indigo-800">Домой</a>
                     <a href="#contents" class="nav-link text-indigo-600 hover:text-indigo-800">Оглавление</a>
-                    <a href="#solutions" class="nav-link text-indigo-600 hover:text-indigo-800">Решения</a>
                     <div class="ml-2 sm:ml-4">
                         <button id="lang-ru" class="px-3 py-1 border border-indigo-500 text-indigo-500 rounded-l-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">RU</button>
                         <button id="lang-en" class="px-3 py-1 border-t border-b border-r border-indigo-500 text-indigo-500 rounded-r-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">EN</button>
@@ -118,7 +117,7 @@
             'ML': { ru: "Муниципальный этап", en: "Municipal level" },
             'RL': { ru: "Региональный этап", en: "Regional level" },
             'FL': { ru: "Финальный этап", en: "Final (federal) level" },
-            'unknown': { ru: "н/д", en: "n/a" }
+            'unknown': { ru: "Задачник", en: "Taskbook" } // Изменено здесь
         };
         // --- КОНЕЦ НАСТРОЕК ---
 
@@ -154,12 +153,15 @@
                     contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Пожалуйста, укажите корректную ссылку...</p>`;
                     hideLoading(); return;
                 }
-                const csvText = await fetchCsvData(GOOGLE_SHEET_CSV_URL);
+                // Добавляем случайный параметр к URL, чтобы попытаться обойти кэш
+                const noCacheUrl = GOOGLE_SHEET_CSV_URL + '&t=' + new Date().getTime();
+                const csvText = await fetchCsvData(noCacheUrl); // Используем URL без кэша
+                
                 allProblems = parseCsvDataRobust(csvText); 
                 if (allProblems.length === 0 && csvText.trim() !== '') {
                      console.warn('CSV текст был получен, но парсинг не дал результатов...');
                 }
-                console.log(`Задачи загружены: ${allProblems.length} шт.`);
+                console.log(`Задачи загружены: ${allProblems.length} шт. Время: ${new Date().toLocaleTimeString()}`);
                 window.addEventListener('hashchange', handleRouteChange);
                 handleRouteChange(); 
             } catch (error) {
@@ -214,20 +216,25 @@
         }
 
         function renderHomePage() {
+            const taskbookLinkRu = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Задачник</a>`;
+            const taskbookLinkEn = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Taskbook</a>`;
+            const bookInfoRu = `Задачи, обозначенные в оглавлении как ${taskbookLinkRu}, взяты из книги "800 лучших олимпиадных задач по математике для подготовки к ЕГЭ: 9-11 классы / Э.Н. Балаян. - Ростов н/Д: Феникс, 2013. - 317, [2] с.".`;
+            const bookInfoEn = `Problems listed in the Table of Contents as ${taskbookLinkEn} are taken from the book "800 Best Olympiad Problems in Mathematics for ЕГЭ Preparation: Grades 9-11 / E.N. Balayan. - Rostov-on-Don: Phoenix, 2013. - 317, [2] p.".`;
+
             const content = currentLanguage === 'ru' ? `
                 <h2 class="text-2xl font-semibold mb-4">Добро пожаловать!</h2>
                 <p class="mb-2">Этот сайт посвящен задачам математических олимпиад в России.</p>
                 <p class="mb-2">Система математических олимпиад в России многоуровневая и включает в себя школьный, муниципальный, региональный и заключительный этапы Всероссийской олимпиады школьников по математике, а также множество других престижных соревнований.</p>
                 <p class="mb-2">Здесь вы найдете подборку задач различных уровней сложности для подготовки и развития математических навыков.</p>
                 <p class="mb-2">Используйте <a href="#contents" class="text-indigo-600 hover:underline">Оглавление</a> для навигации по задачам, сгруппированным по уровню олимпиады и классу.</p>
-                <p>Для просмотра решений перейдите в раздел <a href="#solutions" class="text-indigo-600 hover:underline">Решения</a>.</p>
+                <p class="mb-2">${bookInfoRu}</p>
             ` : `
                 <h2 class="text-2xl font-semibold mb-4">Welcome!</h2>
                 <p class="mb-2">This site is dedicated to problems from mathematical Olympiads in Russia.</p>
                 <p class="mb-2">The system of mathematical Olympiads in Russia is multi-layered and includes school, municipal, regional, and final stages of the All-Russian Olympiad for schoolchildren in mathematics, as well as many other prestigious competitions.</p>
                 <p class="mb-2">Here you will find a selection of problems of various difficulty levels for preparation and development of mathematical skills.</p>
                 <p class="mb-2">Use the <a href="#contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through problems grouped by Olympiad level and grade.</p>
-                <p>To view solutions, go to the <a href="#solutions" class="text-indigo-600 hover:underline">Solutions</a> section.</p>
+                <p class="mb-2">${bookInfoEn}</p>
             `;
             contentArea.innerHTML = content; 
             updateActiveNavLinks();
@@ -325,7 +332,8 @@
             } else if (levelCodeParam && gradeParam && idParam) { 
                  backLinkHtml = `<div class="mb-4"><a href="#problems?level=${encodeURIComponent(levelCodeParam)}&grade=${encodeURIComponent(gradeParam)}" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К списку задач этого раздела' : 'Back to problems in this section'}</a></div>`;
             } else { 
-                 backLinkHtml = `<div class="mb-4"><a href="#contents" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К оглавлению для выбора раздела' : 'Back to Table of Contents to select a section'}</a></div>`;
+                 window.location.hash = '#contents'; 
+                 return; 
             }
 
             let problemsToShow;
@@ -398,7 +406,12 @@
                 else renderContentsPage(); 
             } else if (path === '#solutions') {
                 const level = params.get('level'); const grade = params.get('grade'); const id = params.get('id'); 
-                renderSolutionsPage(level ? decodeURIComponent(level) : null, grade ? decodeURIComponent(grade) : null, id ? decodeURIComponent(id) : null);
+                if (!id || !level || !grade) {
+                    window.location.hash = '#contents';
+                    hideLoading(); 
+                    return;
+                }
+                renderSolutionsPage(decodeURIComponent(level), decodeURIComponent(grade), decodeURIComponent(id));
             } else renderHomePage(); 
             hideLoading(); window.scrollTo(0, 0); 
         }
@@ -423,10 +436,11 @@
             document.title = currentLanguage === 'ru' ? 'Олимпиадные задачи по математике' : 'Olympiad math problems';
             setActiveLanguageButton(); handleRouteChange(); 
             document.querySelector('footer p').innerHTML = `&copy; ${new Date().getFullYear()} ${currentLanguage === 'ru' ? 'Ваш Сайт Олимпиадных Задач' : 'Your Olympiad Problems Site'}`;
-            const navTexts = currentLanguage === 'ru' ? { home: "Домой", contents: "Оглавление", solutions: "Решения" } : { home: "Home", contents: "Table of Contents", solutions: "Solutions" };
+            const navTexts = currentLanguage === 'ru' ? 
+                { home: "Домой", contents: "Оглавление" } : 
+                { home: "Home", contents: "Table of Contents" };
             document.querySelector('nav a[href="#home"]').textContent = navTexts.home;
             document.querySelector('nav a[href="#contents"]').textContent = navTexts.contents;
-            document.querySelector('nav a[href="#solutions"]').textContent = navTexts.solutions;
         }
 
         function setActiveLanguageButton() {
