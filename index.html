@@ -145,7 +145,7 @@
 
         let allProblems = [];
         let currentLanguage = 'ru'; 
-        let currentSectionProblems = []; // Для хранения задач текущего раздела
+        let currentSectionProblems = []; 
         let currentSectionLevel = null;
         let currentSectionGrade = null;
 
@@ -228,9 +228,10 @@
         }
 
         function renderHomePage() {
-            currentSectionProblems = []; // Сбрасываем список задач раздела
+            currentSectionProblems = [];
             currentSectionLevel = null;
             currentSectionGrade = null;
+            
             const taskbookLinkRu = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Задачник</a>`;
             const taskbookLinkEn = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Taskbook</a>`;
             const bookInfoRu = `Задачи, обозначенные в оглавлении как ${taskbookLinkRu}, взяты из книги "800 лучших олимпиадных задач по математике для подготовки к ЕГЭ: 9-11 классы / Э.Н. Балаян. - Ростов н/Д: Феникс, 2013. - 317, [2] с.".`;
@@ -238,25 +239,27 @@
 
             const content = currentLanguage === 'ru' ? `
                 <h2 class="text-2xl font-semibold mb-4">Добро пожаловать!</h2>
-                <p class="mb-2">Этот сайт посвящен задачам математических олимпиад в России.</p>
-                <p class="mb-2">Система математических олимпиад в России многоуровневая...</p>
-                <p class="mb-2">Здесь вы найдете подборку задач...</p>
-                <p class="mb-2">Используйте <a href="#contents" class="text-indigo-600 hover:underline">Оглавление</a>...</p>
-                <p class="mb-2">${bookInfoRu}</p>
+                <div class="space-y-3 text-gray-700 leading-relaxed">
+                    <p>Этот сайт посвящен задачам математических олимпиад в России — интеллектуальных соревнований для школьников, направленных на развитие логического мышления и нестандартного подхода к решению проблем.</p>
+                    <p>Система олимпиад многоуровневая и включает в себя четыре основных этапа Всероссийской олимпиады школьников (школьный, муниципальный, региональный и заключительный), а также множество других престижных соревнований.</p>
+                    <p>Здесь вы найдете подборку задач различных уровней сложности для подготовки и развития математических навыков. Используйте <a href="#contents" class="text-indigo-600 hover:underline">Оглавление</a> для навигации по задачам, сгруппированным по уровню олимпиады и классу.</p>
+                    <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoRu}</p>
+                </div>
             ` : `
                 <h2 class="text-2xl font-semibold mb-4">Welcome!</h2>
-                <p class="mb-2">This site is dedicated to problems...</p>
-                <p class="mb-2">The system of mathematical Olympiads in Russia is multi-layered...</p>
-                <p class="mb-2">Here you will find a selection of problems...</p>
-                <p class="mb-2">Use the <a href="#contents" class="text-indigo-600 hover:underline">Table of Contents</a>...</p>
-                <p class="mb-2">${bookInfoEn}</p>
+                <div class="space-y-3 text-gray-700 leading-relaxed">
+                    <p>This site is dedicated to problems from mathematical Olympiads in Russia — intellectual competitions for students aimed at developing logical thinking and non-standard problem-solving approaches.</p>
+                    <p>The Olympiad system is multi-layered and includes the four main stages of the All-Russian Olympiad for Schoolchildren (school, municipal, regional, and final), as well as many other prestigious competitions.</p>
+                    <p>Here you will find a selection of problems of various difficulty levels to prepare and enhance your mathematical skills. Use the <a href="#contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through problems grouped by Olympiad level and grade.</p>
+                    <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoEn}</p>
+                </div>
             `;
             contentArea.innerHTML = content; 
             updateActiveNavLinks();
         }
 
         function renderContentsPage() {
-            currentSectionProblems = []; // Сбрасываем список задач раздела
+            currentSectionProblems = []; 
             currentSectionLevel = null;
             currentSectionGrade = null;
             if (allProblems.length === 0) {
@@ -310,20 +313,18 @@
 
         function renderProblemNavigation(currentProblemId, targetPage = 'problems') {
             if (!currentSectionProblems || currentSectionProblems.length === 0 || !currentSectionLevel || !currentSectionGrade) {
-                return ''; // Не показываем навигацию, если нет данных о разделе
+                return ''; 
             }
             const currentIndex = currentSectionProblems.findIndex(p => p[COLUMN_NAMES.id] === currentProblemId);
-            if (currentIndex === -1) return ''; // Текущая задача не найдена в разделе
+            if (currentIndex === -1) return '';
 
             let navHtml = '<div class="mt-6 flex justify-between items-center">';
-            // Кнопка "Предыдущая"
             if (currentIndex > 0) {
                 const prevProblemId = currentSectionProblems[currentIndex - 1][COLUMN_NAMES.id];
                 navHtml += `<a href="#${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(prevProblemId)}" class="nav-button">&larr; ${currentLanguage === 'ru' ? 'Предыдущая' : 'Previous'}</a>`;
             } else {
                 navHtml += `<span class="nav-button disabled">&larr; ${currentLanguage === 'ru' ? 'Предыдущая' : 'Previous'}</span>`;
             }
-            // Кнопка "Следующая"
             if (currentIndex < currentSectionProblems.length - 1) {
                 const nextProblemId = currentSectionProblems[currentIndex + 1][COLUMN_NAMES.id];
                 navHtml += `<a href="#${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(nextProblemId)}" class="nav-button">${currentLanguage === 'ru' ? 'Следующая' : 'Next'} &rarr;</a>`;
@@ -364,7 +365,7 @@
                                     ${currentLanguage === 'ru' ? 'Смотреть решение &rarr;' : 'View Solution &rarr;'}
                                 </a>
                              </div>`;
-                    if (problemIdToShow) { // Показываем навигацию только если отображается одна задача
+                    if (problemIdToShow) { 
                         html += renderProblemNavigation(p[COLUMN_NAMES.id], 'problems');
                     }
                 });
@@ -405,7 +406,7 @@
                     const currentProblemLevelFullName = getOlympicLevelFullName(problemsToShow[0][COLUMN_NAMES.olympicLevel], currentLanguage);
                     pageTitleText = `${currentLanguage === 'ru' ? 'Решение для задачи ID:' : 'Solution for Problem ID:'} ${problemsToShow[0][COLUMN_NAMES.id]} (${currentProblemLevelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${problemsToShow[0][COLUMN_NAMES.gradeLevel]})`;
                  }
-            } else { // Если нет ID, но есть уровень и класс - показываем все решения раздела (хотя сейчас сюда не должны попадать)
+            } else { 
                 problemsToShow = currentSectionProblems;
             }
 
@@ -451,7 +452,7 @@
                                     <div class="task-text text-gray-600 text-sm leading-relaxed">${commentsTextRendered}</div>
                                 </div>` : ''}
                              </div>`;
-                    if (idParam) { // Показываем навигацию только если отображается одно решение
+                    if (idParam) { 
                          html += renderProblemNavigation(p[COLUMN_NAMES.id], 'solutions');
                     }
                 });
@@ -481,13 +482,12 @@
                 renderContentsPage();
             } else if (path === '#problems') {
                 if (level && grade) {
-                    // Если есть ID, показываем одну задачу, иначе - список задач раздела
                     renderProblemsPage(decodeURIComponent(level), decodeURIComponent(grade), id ? decodeURIComponent(id) : null);
                 } else {
                     renderContentsPage(); 
                 }
             } else if (path === '#solutions') {
-                if (!id || !level || !grade) { // Если нет ID, перенаправляем
+                if (!id || !level || !grade) { 
                     window.location.hash = '#contents';
                     hideLoading(); 
                     return;
