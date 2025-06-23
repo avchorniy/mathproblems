@@ -79,6 +79,41 @@
                     'FL': { ru: "Финальный этап", en: "Final (federal) level" },
                     'unknown': { ru: "Задачник", en: "Taskbook" }
                 }
+            },
+            'astronomy': {
+                name: { ru: "Астрономия", en: "Astronomy" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'biology': {
+                name: { ru: "Биология", en: "Biology" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'chemistry': {
+                name: { ru: "Химия", en: "Chemistry" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'ecology': {
+                name: { ru: "Экология", en: "Ecology" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'geography': {
+                name: { ru: "География", en: "Geography" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'informatics': {
+                name: { ru: "Информатика", en: "Informatics (CS)" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
+            },
+            'economics': {
+                name: { ru: "Экономика", en: "Economics" },
+                googleSheetUrl: 'YOUR_URL_HERE',
+                olympicLevelNames: { 'unknown': { ru: "Задачник", en: "Taskbook" } }
             }
         };
 
@@ -162,7 +197,7 @@
                     <h1 class="text-4xl font-bold text-gray-800 mb-2">${currentLanguage === 'ru' ? 'Портал олимпиадных задач' : 'Olympiad Problems Portal'}</h1>
                     <p class="text-lg text-gray-600">${currentLanguage === 'ru' ? 'Выберите предмет для начала' : 'Choose a subject to begin'}</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             `;
             for (const key in SUBJECTS) {
                 const subject = SUBJECTS[key];
@@ -203,7 +238,7 @@
                 </header>
                 <main id="content-area" class="bg-white shadow-md rounded-lg p-6 min-h-[60vh]"></main>
                 <footer class="text-center text-gray-600 mt-8 py-4">
-                    <p>&copy; ${new Date().getFullYear()} Ваш Сайт Олимпиадных Задач</p>
+                    <p id="footer-text">&copy; ${new Date().getFullYear()} Ваш Сайт Олимпиадных Задач</p>
                 </footer>
                 <div id="loading-indicator" class="hidden text-lg font-semibold" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">Загрузка данных...</div>
             `;
@@ -255,6 +290,9 @@
                         <p>Use the <a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through the problems.</p>
                     </div>
                 `;
+            } else {
+                const subjectName = SUBJECTS[currentSubjectKey].name[currentLanguage];
+                 homeContent = `<h2 class="text-2xl font-semibold mb-4">${currentLanguage === 'ru' ? `Раздел "${subjectName}" в разработке` : `The "${subjectName}" section is under construction`}</h2><p>${currentLanguage === 'ru' ? 'Задачи для этого предмета скоро появятся!' : 'Problems for this subject will be available soon!'}</p>`;
             }
             document.getElementById('content-area').innerHTML = homeContent;
         }
@@ -262,7 +300,7 @@
         function renderSubjectContentsPage() {
             currentSectionProblems = []; currentSectionLevel = null; currentSectionGrade = null;
             if (allProblems.length === 0) {
-                document.getElementById('content-area').innerHTML = `<p class="text-center">Данные для этого предмета не загружены.</p>`; return;
+                document.getElementById('content-area').innerHTML = `<p class="text-center">Данные для этого предмета не загружены или отсутствуют.</p>`; return;
             }
             const counts = {}; 
             const olympicLevelCodes = new Set(); 
@@ -352,7 +390,7 @@
                 problemsToDisplay.forEach(p => {
                     const problemTextRendered = renderTextWithImages(currentLanguage === 'ru' ? p[COLUMN_NAMES.problemRus] : p[COLUMN_NAMES.problemEng]);
                     html += `<div class="task-item">
-                                <p class="font-semibold text-lg mb-2">Задача ID: ${p[COLUMN_NAMES.id]}</p>
+                                <p class="font-semibold text-lg mb-2">${currentLanguage === 'ru' ? 'Задача ID:' : 'Problem ID:'} ${p[COLUMN_NAMES.id]}</p>
                                 <div class="task-text text-gray-700 leading-relaxed">${problemTextRendered || 'Текст задачи отсутствует.'}</div>
                                 <a href="#${currentSubjectKey}/solutions?level=${encodeURIComponent(p[COLUMN_NAMES.olympicLevel])}&grade=${encodeURIComponent(p[COLUMN_NAMES.gradeLevel])}&id=${encodeURIComponent(p[COLUMN_NAMES.id])}" class="mt-3 inline-block text-sm text-indigo-600 hover:text-indigo-800 hover:underline">
                                     ${currentLanguage === 'ru' ? 'Смотреть решение &rarr;' : 'View Solution &rarr;'}
@@ -375,11 +413,11 @@
             const problem = currentSectionProblems.find(p => p[COLUMN_NAMES.id] === id);
             
             const levelFullName = getOlympicLevelFullName(levelCode, currentLanguage);
-            let html = `<h2 class="text-2xl font-semibold mb-4">Решение для задачи ID: ${id}</h2>`;
+            let html = `<h2 class="text-2xl font-semibold mb-4">${currentLanguage === 'ru' ? 'Решение для задачи ID:' : 'Solution for Problem ID:'} ${id}</h2>`;
             html += `<div class="mb-4"><a href="#${currentSubjectKey}/problems?level=${encodeURIComponent(levelCode)}&grade=${encodeURIComponent(grade)}&id=${encodeURIComponent(id)}" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К условию этой задачи' : 'Back to this problem statement'}</a></div>`;
             
             if (!problem) {
-                html += `<p>Задача с ID ${id} не найдена в этом разделе.</p>`;
+                html += `<p>${currentLanguage === 'ru' ? 'Задача' : 'Problem'} с ID ${id} не найдена в этом разделе.</p>`;
             } else {
                  const problemTextRendered = renderTextWithImages(currentLanguage === 'ru' ? problem[COLUMN_NAMES.problemRus] : problem[COLUMN_NAMES.problemEng]);
                  const solutionTextRaw = currentLanguage === 'ru' ? problem[COLUMN_NAMES.solutionRus] : problem[COLUMN_NAMES.solutionEng];
@@ -393,18 +431,18 @@
                  }
 
                  html += `<div class="task-item">
-                            <p class="font-semibold text-lg mb-1">Задача ID: ${problem[COLUMN_NAMES.id]}</p>
+                            <p class="font-semibold text-lg mb-1">${currentLanguage === 'ru' ? 'Задача ID:' : 'Problem ID:'} ${problem[COLUMN_NAMES.id]}</p>
                             <p class="text-sm text-gray-500 mb-2">(${levelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${problem[COLUMN_NAMES.gradeLevel]})</p>
                             <div class="mb-3 p-3 bg-gray-50 rounded border border-gray-200">
-                                <p class="font-medium mb-1">Условие:</p>
+                                <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Условие:' : 'Problem Statement:'}</p>
                                 <div class="task-text text-sm text-gray-600 leading-relaxed">${problemTextRendered}</div>
                             </div>
                             <div class="mb-2">
-                                <p class="font-medium mb-1">Решение:</p>
+                                <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Решение:' : 'Solution:'}</p>
                                 <div class="task-text text-gray-700 leading-relaxed">${solutionDisplayContent}</div>
                             </div>
                             ${commentsTextRendered && commentsTextRendered.trim() !== '' ? `<div class="mt-3 pt-3 border-t border-gray-200">
-                                <p class="font-medium mb-1">Комментарии:</p>
+                                <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Комментарии:' : 'Comments:'}</p>
                                 <div class="task-text text-gray-600 text-sm leading-relaxed">${commentsTextRendered}</div>
                             </div>` : ''}
                           </div>`;
@@ -448,6 +486,11 @@
             document.getElementById('home-link').textContent = currentLanguage === 'ru' ? 'Домой' : 'Home';
             document.getElementById('contents-link').textContent = currentLanguage === 'ru' ? 'Оглавление' : 'Table of Contents';
             
+            const footerText = document.getElementById('footer-text');
+            if(footerText) {
+                footerText.innerHTML = `&copy; ${new Date().getFullYear()} ${currentLanguage === 'ru' ? 'Ваш Сайт Олимпиадных Задач' : 'Your Olympiad Problems Site'}`;
+            }
+
             const langRuButton = document.getElementById('lang-ru');
             const langEnButton = document.getElementById('lang-en');
              if (currentLanguage === 'ru') {
@@ -455,7 +498,8 @@
                 langEnButton.classList.remove('bg-indigo-500', 'text-white'); langEnButton.classList.add('text-indigo-500');
             } else {
                 langEnButton.classList.add('bg-indigo-500', 'text-white'); langEnButton.classList.remove('text-indigo-500');
-                langRuButton.classList.remove('bg-indigo-500', 'text-white'); langRuButton.classList.add('text-indigo-500');
+                langRuButton.classList.remove('bg-indigo-500', 'text-white');
+                langRuButton.classList.add('text-indigo-500');
             }
         }
 
@@ -479,7 +523,11 @@
                 const loadingIndicator = document.getElementById('loading-indicator');
                 loadingIndicator.classList.remove('hidden');
 
-                if (subjectChanged || allProblems.length === 0) {
+                if (subjectChanged) {
+                    allProblems = [];
+                }
+
+                if (allProblems.length === 0) {
                     try {
                         const url = SUBJECTS[subjectKey].googleSheetUrl;
                         if (url.includes('YOUR_')) throw new Error(`Placeholder URL for ${subjectKey}`);
@@ -498,7 +546,7 @@
                 const grade = params.get('grade');
 
                 const contentArea = document.getElementById('content-area');
-                contentArea.innerHTML = ''; // Clear previous content
+                contentArea.innerHTML = '';
 
                 if (page === 'home') {
                     renderSubjectHomePage();
@@ -508,13 +556,13 @@
                     if (level && grade) {
                         renderProblemsPage(decodeURIComponent(level), decodeURIComponent(grade), id ? decodeURIComponent(id) : null);
                     } else {
-                        renderSubjectContentsPage(); // Fallback to contents if params are missing
+                        renderSubjectContentsPage();
                     }
                 } else if (page === 'solutions') {
                      if (id && level && grade) {
                         renderSolutionsPage(decodeURIComponent(level), decodeURIComponent(grade), decodeURIComponent(id));
                      } else {
-                        window.location.hash = `${currentSubjectKey}/contents`; // Fallback
+                        window.location.hash = `${currentSubjectKey}/contents`;
                      }
                 } else {
                     renderSubjectHomePage();
