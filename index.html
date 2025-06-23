@@ -3,117 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Олимпиадные задачи по математике</title>
+    <title>Олимпиадные задачи</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" id="MathJax-script" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
     </script>
     <style>
-        /* Дополнительные стили */
+        /* General Styles */
         body { font-family: 'Inter', sans-serif; }
-        .task-text p { margin-bottom: 0.5em; }
         .katex-display { overflow-x: auto; overflow-y: hidden; }
-        .nav-link {
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.3s;
+        .task-text p { margin-bottom: 0.5em; }
+
+        /* Subject Selection Page Styles */
+        .subject-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+            text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active {
-            background-color: #e0e7ff; /* bg-indigo-100 */
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .subject-card h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
             color: #3730a3; /* text-indigo-800 */
         }
-        .table-cell-link {
-            display: block;
-            padding: 12px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .table-cell-link:hover {
-            background-color: #6366f1; /* bg-indigo-600 */
-            color: white;
-        }
-        .task-item {
-            border: 1px solid #e5e7eb; /* border-gray-200 */
-            padding: 16px;
-            margin-bottom: 16px;
-            border-radius: 8px;
-            background-color: white;
-        }
-        #loading-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: rgba(255,255,255,0.9);
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-        .task-text img { /* Стили для изображений, вставленных в текст */
-            max-width: 100%; /* Чтобы не вылезали за пределы блока */
-            height: auto;
-            border-radius: 6px;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-            display: block; /* Чтобы изображение было на своей строке */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        mjx-container[jax="CHTML"][display="true"] {
-            display: block;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        .nav-button {
-            background-color: #4f46e5; /* bg-indigo-600 */
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem; /* rounded-md */
-            text-decoration: none;
-            transition: background-color 0.3s;
-            font-size: 0.875rem; /* text-sm */
-        }
-        .nav-button:hover {
-            background-color: #4338ca; /* bg-indigo-700 */
-        }
-        .nav-button.disabled {
-            background-color: #a5b4fc; /* bg-indigo-300 */
-            cursor: not-allowed;
-        }
+
+        /* Subject-specific Page Styles */
+        .nav-link { padding: 8px 16px; border-radius: 6px; transition: background-color 0.3s; }
+        .nav-link:hover, .nav-link.active { background-color: #e0e7ff; color: #3730a3; }
+        .table-cell-link { display: block; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; transition: all 0.3s; }
+        .table-cell-link:hover { background-color: #6366f1; color: white; }
+        .task-item { border: 1px solid #e5e7eb; padding: 16px; margin-bottom: 16px; border-radius: 8px; background-color: white; }
+        .task-text img { max-width: 100%; height: auto; border-radius: 6px; margin: 0.5em auto; display: block; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        mjx-container[jax="CHTML"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; }
+        .nav-button { background-color: #4f46e5; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; transition: background-color 0.3s; font-size: 0.875rem; }
+        .nav-button:hover { background-color: #4338ca; }
+        .nav-button.disabled { background-color: #a5b4fc; cursor: not-allowed; }
+        #loading-indicator { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
     <div id="app" class="container mx-auto p-4 max-w-5xl">
-        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
-            <div class="flex flex-col sm:flex-row justify-between items-center">
-                <h1 id="main-title" class="text-3xl font-bold text-indigo-700 mb-4 sm:mb-0">Олимпиадные задачи по математике</h1>
-                <nav class="flex space-x-2 sm:space-x-4 items-center">
-                    <a href="#home" class="nav-link text-indigo-600 hover:text-indigo-800">Домой</a>
-                    <a href="#contents" class="nav-link text-indigo-600 hover:text-indigo-800">Оглавление</a>
-                    <div class="ml-2 sm:ml-4">
-                        <button id="lang-ru" class="px-3 py-1 border border-indigo-500 text-indigo-500 rounded-l-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">RU</button>
-                        <button id="lang-en" class="px-3 py-1 border-t border-b border-r border-indigo-500 text-indigo-500 rounded-r-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">EN</button>
-                    </div>
-                </nav>
-            </div>
-        </header>
-
-        <main id="content-area" class="bg-white shadow-md rounded-lg p-6 min-h-[60vh]">
-            </main>
-
-        <footer class="text-center text-gray-600 mt-8 py-4">
-            <p>&copy; <span id="current-year">2024</span> Ваш Сайт Олимпиадных Задач</p>
-        </footer>
+        <!-- Main content will be rendered here by JavaScript -->
     </div>
 
-    <div id="loading-indicator" class="hidden text-lg font-semibold">Загрузка данных...</div>
-
     <script>
-        // --- НАСТРОЙКИ ---
-        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZaJZ2lSBaQQh8zvC8CD_BoADg6NaOuYObz56ty73BIf1LNiTG0PNrhy8QYbWgHgHHB_LjLAJaHb2Y/pub?gid=0&single=true&output=csv'; 
+        // --- CONFIGURATION ---
+        const SUBJECTS = {
+            'math': {
+                name: { ru: "Математика", en: "Mathematics" },
+                googleSheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZaJZ2lSBaQQh8zvC8CD_BoADg6NaOuYObz56ty73BIf1LNiTG0PNrhy8QYbWgHgHHB_LjLAJaHb2Y/pub?gid=0&single=true&output=csv',
+                olympicLevelNames: {
+                    'SL': { ru: "Школьный этап", en: "School level" },
+                    'ML': { ru: "Муниципальный этап", en: "Municipal level" },
+                    'RL': { ru: "Региональный этап", en: "Regional level" },
+                    'FL': { ru: "Финальный этап", en: "Final (federal) level" },
+                    'unknown': { ru: "Задачник", en: "Taskbook" }
+                }
+            },
+            'physics': {
+                name: { ru: "Физика", en: "Physics" },
+                googleSheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRlugIrRgTGDQrAyBAyaSzqe0UoBDYV-5QwnGhtQuPhlZG8V9SCQLOxfjWDoFGZ4DDrVcwhS2WeXEih/pub?output=csv',
+                olympicLevelNames: { 
+                    'SL': { ru: "Школьный этап", en: "School level" },
+                    'ML': { ru: "Муниципальный этап", en: "Municipal level" },
+                    'RL': { ru: "Региональный этап", en: "Regional level" },
+                    'FL': { ru: "Финальный этап", en: "Final (federal) level" },
+                    'unknown': { ru: "Задачник", en: "Taskbook" }
+                }
+            }
+        };
 
         const COLUMN_NAMES = {
             id: 'id',
@@ -126,66 +93,52 @@
             commentsRus: 'comments (Rus)',
             commentsEng: 'comments (English)',
         };
+        // --- END OF CONFIGURATION ---
 
-        const OLYMPIC_LEVEL_NAMES = {
-            'SL': { ru: "Школьный этап", en: "School level" },
-            'ML': { ru: "Муниципальный этап", en: "Municipal level" },
-            'RL': { ru: "Региональный этап", en: "Regional level" },
-            'FL': { ru: "Финальный этап", en: "Final (federal) level" },
-            'unknown': { ru: "Задачник", en: "Taskbook" } 
-        };
-        // --- КОНЕЦ НАСТРОЕК ---
-
-        const contentArea = document.getElementById('content-area');
-        const langRuButton = document.getElementById('lang-ru');
-        const langEnButton = document.getElementById('lang-en');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const mainTitleElement = document.getElementById('main-title'); 
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        let allProblems = [];
+        const appContainer = document.getElementById('app');
+        let currentSubjectKey = null;
         let currentLanguage = 'ru'; 
+        let allProblems = [];
         let currentSectionProblems = []; 
         let currentSectionLevel = null;
         let currentSectionGrade = null;
-
-
+        
+        // --- Core Functions ---
         function getOlympicLevelFullName(levelCode, lang) {
-            return OLYMPIC_LEVEL_NAMES[levelCode]?.[lang] || levelCode;
+            const names = SUBJECTS[currentSubjectKey]?.olympicLevelNames;
+            return names?.[levelCode]?.[lang] || levelCode;
         }
 
-        async function initializeApp() {
-            showLoading();
-            setActiveLanguageButton(); 
-            try {
-                if (window.location.protocol === 'file:') {
-                    contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Ошибка CORS...</p><p class="text-center mt-2">Пожалуйста, используйте локальный веб-сервер...</p><ul class="list-disc list-inside mx-auto mt-2 text-sm w-fit"><li><b>Python:</b> <code>python -m http.server 8000</code> ...</li><li><b>Node.js:</b> <code>npx http-server</code> ...</li></ul>`;
-                    hideLoading(); return;
+        async function fetchCsvData(url) {
+            const noCacheUrl = url + '&t=' + new Date().getTime();
+            const response = await fetch(noCacheUrl);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status} when fetching CSV (${url}).`);
+            return await response.text();
+        }
+
+        function parseCsvDataRobust(csvText) {
+            const lines = csvText.trim().split(/\r?\n/);
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            const data = [];
+            const csvRowRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; 
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue; 
+                const values = lines[i].split(csvRowRegex).map(v => {
+                    v = v.trim();
+                    if (v.startsWith('"') && v.endsWith('"')) v = v.substring(1, v.length - 1);
+                    return v.replace(/""/g, '"');
+                });
+                if (values.length === headers.length) {
+                    const entry = {};
+                    headers.forEach((h, idx) => { entry[h] = values[idx] || ''; });
+                    data.push(entry);
+                } else {
+                    console.warn(`Skipping CSV row ${i+1}: column count mismatch.`);
                 }
-                if (GOOGLE_SHEET_CSV_URL === 'YOUR_PUBLISHED_GOOGLE_SHEET_CSV_URL_HERE' || !GOOGLE_SHEET_CSV_URL.includes('output=csv')) {
-                    contentArea.innerHTML = `<p class="text-red-500 font-bold text-center">Пожалуйста, укажите корректную ссылку...</p>`;
-                    hideLoading(); return;
-                }
-                const noCacheUrl = GOOGLE_SHEET_CSV_URL + '&t=' + new Date().getTime();
-                const csvText = await fetchCsvData(noCacheUrl); 
-                
-                allProblems = parseCsvDataRobust(csvText); 
-                if (allProblems.length === 0 && csvText.trim() !== '') {
-                     console.warn('CSV текст был получен, но парсинг не дал результатов...');
-                }
-                console.log(`Задачи загружены: ${allProblems.length} шт. Время: ${new Date().toLocaleTimeString()}`);
-                window.addEventListener('hashchange', handleRouteChange);
-                handleRouteChange(); 
-            } catch (error) {
-                console.error('Ошибка инициализации приложения:', error);
-                contentArea.innerHTML = `<p class="text-red-500 text-center">Не удалось загрузить или обработать данные...</p>`;
-            } finally {
-                hideLoading();
             }
+            return data;
         }
-
-        function showLoading() { loadingIndicator.classList.remove('hidden'); }
-        function hideLoading() { loadingIndicator.classList.add('hidden'); }
         
         function renderTextWithImages(text) {
             if (!text) return '';
@@ -197,74 +150,119 @@
             return processedText;
         }
 
-        async function fetchCsvData(url) {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status} при загрузке CSV (${url}).`);
-            return await response.text();
-        }
-
-        function parseCsvDataRobust(csvText) {
-            const lines = csvText.trim().split(/\r?\n/);
-            if (lines.length < 2) return [];
-            const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
-            const data = [];
-            const csvRowRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; 
-            for (let i = 1; i < lines.length; i++) {
-                if (lines[i].trim() === '') continue; 
-                const values = lines[i].split(csvRowRegex).map(value => {
-                    value = value.trim();
-                    if (value.startsWith('"') && value.endsWith('"')) value = value.substring(1, value.length - 1);
-                    return value.replace(/""/g, '"');
-                });
-                if (values.length === headers.length) {
-                    const entry = {};
-                    headers.forEach((header, index) => { entry[header] = values[index] || ''; });
-                    data.push(entry);
-                } else {
-                    console.warn(`Пропуск строки CSV ${i+1}: ...`);
-                }
-            }
-            return data;
-        }
-
-        function renderHomePage() {
-            currentSectionProblems = [];
-            currentSectionLevel = null;
-            currentSectionGrade = null;
-            
-            const taskbookLinkRu = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Задачник</a>`;
-            const taskbookLinkEn = `<a href="#problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Taskbook</a>`;
-            const bookInfoRu = `Задачи, обозначенные в оглавлении как ${taskbookLinkRu}, взяты из книги "800 лучших олимпиадных задач по математике для подготовки к ЕГЭ: 9-11 классы / Э.Н. Балаян. - Ростов н/Д: Феникс, 2013. - 317, [2] с.".`;
-            const bookInfoEn = `Problems listed in the Table of Contents as ${taskbookLinkEn} are taken from the book "800 Best Olympiad Problems in Mathematics for ЕГЭ Preparation: Grades 9-11 / E.N. Balayan. - Rostov-on-Don: Phoenix, 2013. - 317, [2] p.".`;
-
-            const content = currentLanguage === 'ru' ? `
-                <h2 class="text-2xl font-semibold mb-4">Добро пожаловать!</h2>
-                <div class="space-y-3 text-gray-700 leading-relaxed">
-                    <p>Этот сайт посвящен задачам математических олимпиад в России — интеллектуальных соревнований для школьников, направленных на развитие логического мышления и нестандартного подхода к решению проблем.</p>
-                    <p>Система олимпиад многоуровневая и включает в себя четыре основных этапа Всероссийской олимпиады школьников (школьный, муниципальный, региональный и заключительный), а также множество других престижных соревнований.</p>
-                    <p>Здесь вы найдете подборку задач различных уровней сложности для подготовки и развития математических навыков. Используйте <a href="#contents" class="text-indigo-600 hover:underline">Оглавление</a> для навигации по задачам, сгруппированным по уровню олимпиады и классу.</p>
-                    <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoRu}</p>
+        // --- Main Page Rendering ---
+        function renderMainPage() {
+            document.title = currentLanguage === 'ru' ? 'Олимпиадные задачи' : 'Olympiad Problems';
+            let html = `
+                <div class="flex justify-end mb-4">
+                    <button id="lang-ru-main" class="px-3 py-1 border border-indigo-500 text-indigo-500 rounded-l-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm">RU</button>
+                    <button id="lang-en-main" class="px-3 py-1 border-t border-b border-r border-indigo-500 text-indigo-500 rounded-r-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm">EN</button>
                 </div>
-            ` : `
-                <h2 class="text-2xl font-semibold mb-4">Welcome!</h2>
-                <div class="space-y-3 text-gray-700 leading-relaxed">
-                    <p>This site is dedicated to problems from mathematical Olympiads in Russia — intellectual competitions for students aimed at developing logical thinking and non-standard problem-solving approaches.</p>
-                    <p>The Olympiad system is multi-layered and includes the four main stages of the All-Russian Olympiad for Schoolchildren (school, municipal, regional, and final), as well as many other prestigious competitions.</p>
-                    <p>Here you will find a selection of problems of various difficulty levels to prepare and enhance your mathematical skills. Use the <a href="#contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through problems grouped by Olympiad level and grade.</p>
-                    <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoEn}</p>
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-bold text-gray-800 mb-2">${currentLanguage === 'ru' ? 'Портал олимпиадных задач' : 'Olympiad Problems Portal'}</h1>
+                    <p class="text-lg text-gray-600">${currentLanguage === 'ru' ? 'Выберите предмет для начала' : 'Choose a subject to begin'}</p>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             `;
-            contentArea.innerHTML = content; 
-            updateActiveNavLinks();
+            for (const key in SUBJECTS) {
+                const subject = SUBJECTS[key];
+                html += `
+                    <a href="#${key}/home" class="subject-card">
+                        <h2>${subject.name[currentLanguage]}</h2>
+                    </a>
+                `;
+            }
+            html += `</div>`;
+            appContainer.innerHTML = html;
+            
+            document.getElementById('lang-ru-main').addEventListener('click', () => setLanguage('ru'));
+            document.getElementById('lang-en-main').addEventListener('click', () => setLanguage('en'));
+            updateMainPageLangButtons();
         }
 
-        function renderContentsPage() {
-            currentSectionProblems = []; 
-            currentSectionLevel = null;
-            currentSectionGrade = null;
+        // --- Subject-Specific App Rendering ---
+        function renderSubjectApp(subjectKey) {
+            const subject = SUBJECTS[subjectKey];
+            const subjectName = subject.name[currentLanguage];
+            document.title = subjectName;
+
+            const headerHtml = `
+                <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center">
+                        <h1 id="main-title" class="text-3xl font-bold text-indigo-700 mb-4 sm:mb-0">${subjectName}</h1>
+                        <nav class="flex space-x-2 sm:space-x-4 items-center">
+                            <a href="#" id="subjects-link" class="nav-link text-indigo-600 hover:text-indigo-800"></a>
+                            <a href="#${subjectKey}/home" id="home-link" class="nav-link text-indigo-600 hover:text-indigo-800"></a>
+                            <a href="#${subjectKey}/contents" id="contents-link" class="nav-link text-indigo-600 hover:text-indigo-800"></a>
+                            <div class="ml-2 sm:ml-4">
+                                <button id="lang-ru" class="px-3 py-1 border border-indigo-500 text-indigo-500 rounded-l-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">RU</button>
+                                <button id="lang-en" class="px-3 py-1 border-t border-b border-r border-indigo-500 text-indigo-500 rounded-r-md hover:bg-indigo-500 hover:text-white focus:outline-none text-sm sm:text-base">EN</button>
+                            </div>
+                        </nav>
+                    </div>
+                </header>
+                <main id="content-area" class="bg-white shadow-md rounded-lg p-6 min-h-[60vh]"></main>
+                <footer class="text-center text-gray-600 mt-8 py-4">
+                    <p>&copy; ${new Date().getFullYear()} Ваш Сайт Олимпиадных Задач</p>
+                </footer>
+                <div id="loading-indicator" class="hidden text-lg font-semibold" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">Загрузка данных...</div>
+            `;
+            appContainer.innerHTML = headerHtml;
+
+            document.getElementById('lang-ru').addEventListener('click', () => setLanguage('ru'));
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+            updateLanguageUI();
+        }
+        
+        // --- Subject Pages Rendering Logic ---
+        function renderSubjectHomePage() {
+            currentSectionProblems = []; currentSectionLevel = null; currentSectionGrade = null;
+            let homeContent = ``;
+
+            if (currentSubjectKey === 'math') {
+                const bookInfoRu = `Задачи, обозначенные в оглавлении как <a href="#math/problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Задачник</a>, взяты из книги "800 лучших олимпиадных задач по математике для подготовки к ЕГЭ: 9-11 классы / Э.Н. Балаян. - Ростов н/Д: Феникс, 2013. - 317, [2] с.".`;
+                const bookInfoEn = `Problems listed in the Table of Contents as <a href="#math/problems?level=unknown&grade=Taskbook" class="text-indigo-600 hover:underline">Taskbook</a> are taken from the book "800 Best Olympiad Problems in Mathematics for ЕГЭ Preparation: Grades 9-11 / E.N. Balayan. - Rostov-on-Don: Phoenix, 2013. - 317, [2] p.".`;
+                homeContent = currentLanguage === 'ru' ? `
+                    <h2 class="text-2xl font-semibold mb-4">Добро пожаловать!</h2>
+                    <div class="space-y-3 text-gray-700 leading-relaxed">
+                        <p>Этот раздел посвящен задачам математических олимпиад в России — интеллектуальных соревнований для школьников, направленных на развитие логического мышления и нестандартного подхода к решению проблем.</p>
+                        <p>Система олимпиад многоуровневая и включает в себя четыре основных этапа Всероссийской олимпиады школьников (школьный, муниципальный, региональный и заключительный), а также множество других престижных соревнований.</p>
+                        <p>Здесь вы найдете подборку задач различных уровней сложности для подготовки и развития математических навыков. Используйте <a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">Оглавление</a> для навигации по задачам, сгруппированным по уровню олимпиады и классу.</p>
+                        <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoRu}</p>
+                    </div>
+                ` : `
+                    <h2 class="text-2xl font-semibold mb-4">Welcome!</h2>
+                    <div class="space-y-3 text-gray-700 leading-relaxed">
+                        <p>This section is dedicated to problems from mathematical Olympiads in Russia — intellectual competitions for students aimed at developing logical thinking and non-standard problem-solving approaches.</p>
+                        <p>The Olympiad system is multi-layered and includes the four main stages of the All-Russian Olympiad for Schoolchildren (school, municipal, regional, and final), as well as many other prestigious competitions.</p>
+                        <p>Here you will find a selection of problems of various difficulty levels to prepare and enhance your mathematical skills. Use the <a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through problems grouped by Olympiad level and grade.</p>
+                        <p class="text-sm text-gray-600 border-t pt-4 mt-4">${bookInfoEn}</p>
+                    </div>
+                `;
+            } else if (currentSubjectKey === 'physics') {
+                homeContent = currentLanguage === 'ru' ? `
+                    <h2 class="text-2xl font-semibold mb-4">Добро пожаловать в раздел по физике!</h2>
+                    <div class="space-y-3 text-gray-700 leading-relaxed">
+                        <p>Олимпиады по физике проверяют не только знание формул, но и умение применять физические законы в нестандартных ситуациях, ставить эксперименты и анализировать данные.</p>
+                        <p>Здесь собраны задачи, которые помогут вам подготовиться к различным этапам соревнований и углубить свое понимание физического мира.</p>
+                        <p>Используйте <a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">Оглавление</a> для навигации по задачам.</p>
+                    </div>
+                ` : `
+                    <h2 class="text-2xl font-semibold mb-4">Welcome to the Physics Section!</h2>
+                    <div class="space-y-3 text-gray-700 leading-relaxed">
+                        <p>Physics Olympiads test not only knowledge of formulas but also the ability to apply physical laws in non-standard situations, conduct experiments, and analyze data.</p>
+                        <p>Here you will find a collection of problems to help you prepare for various stages of competitions and deepen your understanding of the physical world.</p>
+                        <p>Use the <a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">Table of Contents</a> to navigate through the problems.</p>
+                    </div>
+                `;
+            }
+            document.getElementById('content-area').innerHTML = homeContent;
+        }
+
+        function renderSubjectContentsPage() {
+            currentSectionProblems = []; currentSectionLevel = null; currentSectionGrade = null;
             if (allProblems.length === 0) {
-                contentArea.innerHTML = `<p class="text-center">${currentLanguage === 'ru' ? 'Данные о задачах еще не загружены...' : 'Problem data is not yet loaded...'}</p>`;
-                updateActiveNavLinks(); return;
+                document.getElementById('content-area').innerHTML = `<p class="text-center">Данные для этого предмета не загружены.</p>`; return;
             }
             const counts = {}; 
             const olympicLevelCodes = new Set(); 
@@ -284,7 +282,7 @@
 
             let tableHtml = `<h2 class="text-2xl font-semibold mb-6 text-center">${currentLanguage === 'ru' ? 'Оглавление Задач' : 'Table of Contents'}</h2>`;
             if (sortedOlympicLevelCodes.length === 0 || sortedGradeLevels.length === 0) {
-                 tableHtml += `<p class="text-center">${currentLanguage === 'ru' ? 'Нет данных для отображения оглавления...' : 'No data to display the table of contents...'}</p>`;
+                 tableHtml += `<p class="text-center">Нет данных для отображения.</p>`;
             } else {
                 const gradeHeaderSuffix = currentLanguage === 'ru' ? ' Класс' : ' Grade';
                 tableHtml += `<div class="overflow-x-auto"><table class="min-w-full bg-white border border-gray-300 rounded-lg shadow"><thead class="bg-indigo-500 text-white"><tr>
@@ -298,7 +296,7 @@
                         const key = `${levelCode}__${grade}`; 
                         const count = counts[key] || 0;
                         if (count > 0) {
-                            tableHtml += `<td class="py-1 px-1 border-b text-center"><a href="#problems?level=${encodeURIComponent(levelCode)}&grade=${encodeURIComponent(grade)}" class="table-cell-link text-indigo-600">${count}</a></td>`;
+                            tableHtml += `<td class="py-1 px-1 border-b text-center"><a href="#${currentSubjectKey}/problems?level=${encodeURIComponent(levelCode)}&grade=${encodeURIComponent(grade)}" class="table-cell-link text-indigo-600">${count}</a></td>`;
                         } else {
                             tableHtml += `<td class="py-3 px-4 border-b text-center text-gray-400">${count}</td>`;
                         }
@@ -307,36 +305,32 @@
                 });
                 tableHtml += `</tbody></table></div>`;
             }
-            contentArea.innerHTML = tableHtml;
-            updateActiveNavLinks();
+            document.getElementById('content-area').innerHTML = tableHtml;
         }
-
+        
         function renderProblemNavigation(currentProblemId, targetPage = 'problems') {
-            if (!currentSectionProblems || currentSectionProblems.length === 0 || !currentSectionLevel || !currentSectionGrade) {
-                return ''; 
-            }
+            if (!currentSectionProblems || currentSectionProblems.length === 0) return ''; 
             const currentIndex = currentSectionProblems.findIndex(p => p[COLUMN_NAMES.id] === currentProblemId);
             if (currentIndex === -1) return '';
 
             let navHtml = '<div class="mt-6 flex justify-between items-center">';
             if (currentIndex > 0) {
                 const prevProblemId = currentSectionProblems[currentIndex - 1][COLUMN_NAMES.id];
-                navHtml += `<a href="#${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(prevProblemId)}" class="nav-button">&larr; ${currentLanguage === 'ru' ? 'Предыдущая' : 'Previous'}</a>`;
+                navHtml += `<a href="#${currentSubjectKey}/${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(prevProblemId)}" class="nav-button">&larr; ${currentLanguage === 'ru' ? 'Предыдущая' : 'Previous'}</a>`;
             } else {
                 navHtml += `<span class="nav-button disabled">&larr; ${currentLanguage === 'ru' ? 'Предыдущая' : 'Previous'}</span>`;
             }
             if (currentIndex < currentSectionProblems.length - 1) {
                 const nextProblemId = currentSectionProblems[currentIndex + 1][COLUMN_NAMES.id];
-                navHtml += `<a href="#${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(nextProblemId)}" class="nav-button">${currentLanguage === 'ru' ? 'Следующая' : 'Next'} &rarr;</a>`;
+                navHtml += `<a href="#${currentSubjectKey}/${targetPage}?level=${encodeURIComponent(currentSectionLevel)}&grade=${encodeURIComponent(currentSectionGrade)}&id=${encodeURIComponent(nextProblemId)}" class="nav-button">${currentLanguage === 'ru' ? 'Следующая' : 'Next'} &rarr;</a>`;
             } else {
                 navHtml += `<span class="nav-button disabled">${currentLanguage === 'ru' ? 'Следующая' : 'Next'} &rarr;</span>`;
             }
             navHtml += '</div>';
             return navHtml;
         }
-
-
-        function renderProblemsPage(levelCode, grade, problemIdToShow = null) { 
+        
+        function renderProblemsPage(levelCode, grade, problemIdToShow = null) {
             if (currentSectionLevel !== levelCode || currentSectionGrade !== grade) {
                 currentSectionProblems = allProblems.filter(p => p[COLUMN_NAMES.olympicLevel] === levelCode && p[COLUMN_NAMES.gradeLevel] === grade);
                 currentSectionLevel = levelCode;
@@ -349,198 +343,199 @@
 
             const levelFullName = getOlympicLevelFullName(levelCode, currentLanguage);
             let html = `<h2 class="text-2xl font-semibold mb-4">${currentLanguage === 'ru' ? 'Задачи' : 'Problems'}: ${levelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${grade}</h2>`;
-            html += `<div class="mb-4"><a href="#contents" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К оглавлению' : 'Back to Table of Contents'}</a></div>`;
+            html += `<div class="mb-4"><a href="#${currentSubjectKey}/contents" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К оглавлению' : 'Back to Table of Contents'}</a></div>`;
 
             if (problemsToDisplay.length === 0) {
-                html += `<p>${currentLanguage === 'ru' ? 'Задачи для этого раздела не найдены.' : 'No problems found for this section.'}</p>`;
+                html += `<p>Задачи не найдены.</p>`;
             } else {
                 html += `<div class="space-y-6">`;
                 problemsToDisplay.forEach(p => {
-                    const problemTextRaw = currentLanguage === 'ru' ? p[COLUMN_NAMES.problemRus] : p[COLUMN_NAMES.problemEng];
-                    const problemTextRendered = renderTextWithImages(problemTextRaw);
+                    const problemTextRendered = renderTextWithImages(currentLanguage === 'ru' ? p[COLUMN_NAMES.problemRus] : p[COLUMN_NAMES.problemEng]);
                     html += `<div class="task-item">
-                                <p class="font-semibold text-lg mb-2">${currentLanguage === 'ru' ? 'Задача ID:' : 'Problem ID:'} ${p[COLUMN_NAMES.id]}</p>
-                                <div class="task-text text-gray-700 leading-relaxed">${problemTextRendered || (currentLanguage === 'ru' ? 'Текст задачи отсутствует.' : 'Problem text is missing.')}</div>
-                                <a href="#solutions?level=${encodeURIComponent(p[COLUMN_NAMES.olympicLevel])}&grade=${encodeURIComponent(p[COLUMN_NAMES.gradeLevel])}&id=${encodeURIComponent(p[COLUMN_NAMES.id])}" class="mt-3 inline-block text-sm text-indigo-600 hover:text-indigo-800 hover:underline">
+                                <p class="font-semibold text-lg mb-2">Задача ID: ${p[COLUMN_NAMES.id]}</p>
+                                <div class="task-text text-gray-700 leading-relaxed">${problemTextRendered || 'Текст задачи отсутствует.'}</div>
+                                <a href="#${currentSubjectKey}/solutions?level=${encodeURIComponent(p[COLUMN_NAMES.olympicLevel])}&grade=${encodeURIComponent(p[COLUMN_NAMES.gradeLevel])}&id=${encodeURIComponent(p[COLUMN_NAMES.id])}" class="mt-3 inline-block text-sm text-indigo-600 hover:text-indigo-800 hover:underline">
                                     ${currentLanguage === 'ru' ? 'Смотреть решение &rarr;' : 'View Solution &rarr;'}
                                 </a>
                              </div>`;
-                    if (problemIdToShow) { 
-                        html += renderProblemNavigation(p[COLUMN_NAMES.id], 'problems');
-                    }
+                    if (problemIdToShow) { html += renderProblemNavigation(p[COLUMN_NAMES.id], 'problems'); }
                 });
                 html += `</div>`;
             }
-            contentArea.innerHTML = html;
-            if (window.MathJax && window.MathJax.typeset) {
-                setTimeout(() => window.MathJax.typesetPromise([contentArea]), 0);
-            }
-            updateActiveNavLinks();
-        }
-        
-        function renderSolutionsPage(levelCodeParam, gradeParam, idParam) { 
-            if (currentSectionLevel !== levelCodeParam || currentSectionGrade !== gradeParam) {
-                 currentSectionProblems = allProblems.filter(p => p[COLUMN_NAMES.olympicLevel] === levelCodeParam && p[COLUMN_NAMES.gradeLevel] === gradeParam);
-                 currentSectionLevel = levelCodeParam;
-                 currentSectionGrade = gradeParam;
-            }
-
-            let pageTitleText = currentLanguage === 'ru' ? 'Решения и Комментарии' : 'Solutions and Comments';
-            let backLinkHtml = '';
-            const levelFullName = levelCodeParam ? getOlympicLevelFullName(levelCodeParam, currentLanguage) : '';
-
-            if (levelCodeParam && gradeParam && !idParam) { 
-                 backLinkHtml = `<div class="mb-4"><a href="#contents" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К оглавлению' : 'Back to Table of Contents'}</a></div>`;
-                 pageTitleText = `${currentLanguage === 'ru' ? 'Решения для:' : 'Solutions for:'} ${levelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${gradeParam}`;
-            } else if (levelCodeParam && gradeParam && idParam) { 
-                 backLinkHtml = `<div class="mb-4"><a href="#problems?level=${encodeURIComponent(levelCodeParam)}&grade=${encodeURIComponent(gradeParam)}&id=${encodeURIComponent(idParam)}" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К условию этой задачи' : 'Back to this problem statement'}</a></div>`;
-            } else { 
-                 window.location.hash = '#contents'; 
-                 return; 
-            }
-
-            let problemsToShow;
-            if (idParam) { 
-                problemsToShow = currentSectionProblems.filter(p => p[COLUMN_NAMES.id] === idParam);
-                 if (problemsToShow.length > 0) {
-                    const currentProblemLevelFullName = getOlympicLevelFullName(problemsToShow[0][COLUMN_NAMES.olympicLevel], currentLanguage);
-                    pageTitleText = `${currentLanguage === 'ru' ? 'Решение для задачи ID:' : 'Solution for Problem ID:'} ${problemsToShow[0][COLUMN_NAMES.id]} (${currentProblemLevelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${problemsToShow[0][COLUMN_NAMES.gradeLevel]})`;
-                 }
-            } else { 
-                problemsToShow = currentSectionProblems;
-            }
-
-
-            let html = `<h2 class="text-2xl font-semibold mb-4">${pageTitleText}</h2>` + backLinkHtml;
-
-            if (!problemsToShow || problemsToShow.length === 0) { 
-                html += `<p>${currentLanguage === 'ru' ? 'Решения для этого раздела/задачи не найдены.' : 'No solutions found...'}</p>`;
-            } else {
-                html += `<div class="space-y-6">`;
-                problemsToShow.forEach(p => {
-                    const problemTextRaw = currentLanguage === 'ru' ? p[COLUMN_NAMES.problemRus] : p[COLUMN_NAMES.problemEng];
-                    const solutionTextRaw = currentLanguage === 'ru' ? p[COLUMN_NAMES.solutionRus] : p[COLUMN_NAMES.solutionEng];
-                    const commentsTextRaw = currentLanguage === 'ru' ? p[COLUMN_NAMES.commentsRus] : p[COLUMN_NAMES.commentsEng];
-                    const problemLevelFullName = getOlympicLevelFullName(p[COLUMN_NAMES.olympicLevel], currentLanguage);
-
-                    const problemTextRendered = renderTextWithImages(problemTextRaw);
-                    const solutionTextRendered = renderTextWithImages(solutionTextRaw);
-                    const commentsTextRendered = renderTextWithImages(commentsTextRaw);
-
-                    let solutionDisplayContent;
-                    if (solutionTextRaw && solutionTextRaw.trim() !== '') {
-                        solutionDisplayContent = solutionTextRendered;
-                    } else {
-                        solutionDisplayContent = currentLanguage === 'ru' ? 'Решение отсутствует.' : 'Solution is missing.';
-                    }
-                    
-                    const problemDisplayContent = problemTextRendered || (currentLanguage === 'ru' ? 'Текст задачи отсутствует.' : 'Problem text is missing.');
-
-                    html += `<div class="task-item">
-                                <p class="font-semibold text-lg mb-1">${currentLanguage === 'ru' ? 'Задача ID:' : 'Problem ID:'} ${p[COLUMN_NAMES.id]}</p>
-                                <p class="text-sm text-gray-500 mb-2">(${problemLevelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${p[COLUMN_NAMES.gradeLevel]})</p>
-                                <div class="mb-3 p-3 bg-gray-50 rounded border border-gray-200">
-                                    <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Условие:' : 'Problem Statement:'}</p>
-                                    <div class="task-text text-sm text-gray-600 leading-relaxed">${problemDisplayContent}</div>
-                                </div>
-                                <div class="mb-2">
-                                    <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Решение:' : 'Solution:'}</p>
-                                    <div class="task-text text-gray-700 leading-relaxed">${solutionDisplayContent}</div>
-                                </div>
-                                ${commentsTextRaw && commentsTextRaw.trim() !== '' ? `<div class="mt-3 pt-3 border-t border-gray-200">
-                                    <p class="font-medium mb-1">${currentLanguage === 'ru' ? 'Комментарии:' : 'Comments:'}</p>
-                                    <div class="task-text text-gray-600 text-sm leading-relaxed">${commentsTextRendered}</div>
-                                </div>` : ''}
-                             </div>`;
-                    if (idParam) { 
-                         html += renderProblemNavigation(p[COLUMN_NAMES.id], 'solutions');
-                    }
-                });
-                html += `</div>`;
-            }
-            contentArea.innerHTML = html;
-            if (window.MathJax && window.MathJax.typeset) {
-                 setTimeout(() => window.MathJax.typesetPromise([contentArea]), 0);
-            }
-            updateActiveNavLinks();
+            document.getElementById('content-area').innerHTML = html;
+            if (window.MathJax?.typeset) window.MathJax.typesetPromise();
         }
 
-        function handleRouteChange() {
-            showLoading();
-            const hash = window.location.hash || '#home';
-            const [path, queryString] = hash.split('?');
-            const params = new URLSearchParams(queryString);
-            contentArea.innerHTML = ''; 
+        function renderSolutionsPage(levelCode, grade, id) {
+            if (currentSectionLevel !== levelCode || currentSectionGrade !== grade) {
+                 currentSectionProblems = allProblems.filter(p => p[COLUMN_NAMES.olympicLevel] === levelCode && p[COLUMN_NAMES.gradeLevel] === grade);
+                 currentSectionLevel = levelCode;
+                 currentSectionGrade = grade;
+            }
+            const problem = currentSectionProblems.find(p => p[COLUMN_NAMES.id] === id);
             
-            const level = params.get('level');
-            const grade = params.get('grade');
-            const id = params.get('id');
-
-            if (path === '#home') {
-                renderHomePage();
-            } else if (path === '#contents') {
-                renderContentsPage();
-            } else if (path === '#problems') {
-                if (level && grade) {
-                    renderProblemsPage(decodeURIComponent(level), decodeURIComponent(grade), id ? decodeURIComponent(id) : null);
-                } else {
-                    renderContentsPage(); 
-                }
-            } else if (path === '#solutions') {
-                if (!id || !level || !grade) { 
-                    window.location.hash = '#contents';
-                    hideLoading(); 
-                    return;
-                }
-                renderSolutionsPage(decodeURIComponent(level), decodeURIComponent(grade), decodeURIComponent(id));
+            const levelFullName = getOlympicLevelFullName(levelCode, currentLanguage);
+            let html = `<h2 class="text-2xl font-semibold mb-4">Решение для задачи ID: ${id}</h2>`;
+            html += `<div class="mb-4"><a href="#${currentSubjectKey}/problems?level=${encodeURIComponent(levelCode)}&grade=${encodeURIComponent(grade)}&id=${encodeURIComponent(id)}" class="text-indigo-600 hover:underline">&larr; ${currentLanguage === 'ru' ? 'К условию этой задачи' : 'Back to this problem statement'}</a></div>`;
+            
+            if (!problem) {
+                html += `<p>Задача с ID ${id} не найдена в этом разделе.</p>`;
             } else {
-                renderHomePage(); 
+                 const problemTextRendered = renderTextWithImages(currentLanguage === 'ru' ? problem[COLUMN_NAMES.problemRus] : problem[COLUMN_NAMES.problemEng]);
+                 const solutionTextRaw = currentLanguage === 'ru' ? problem[COLUMN_NAMES.solutionRus] : problem[COLUMN_NAMES.solutionEng];
+                 const commentsTextRendered = renderTextWithImages(currentLanguage === 'ru' ? problem[COLUMN_NAMES.commentsRus] : problem[COLUMN_NAMES.commentsEng]);
+                 
+                 let solutionDisplayContent;
+                 if (solutionTextRaw && solutionTextRaw.trim() !== '') {
+                    solutionDisplayContent = renderTextWithImages(solutionTextRaw);
+                 } else {
+                    solutionDisplayContent = currentLanguage === 'ru' ? 'Решение отсутствует.' : 'Solution is missing.';
+                 }
+
+                 html += `<div class="task-item">
+                            <p class="font-semibold text-lg mb-1">Задача ID: ${problem[COLUMN_NAMES.id]}</p>
+                            <p class="text-sm text-gray-500 mb-2">(${levelFullName}, ${currentLanguage === 'ru' ? 'Класс' : 'Grade'} ${problem[COLUMN_NAMES.gradeLevel]})</p>
+                            <div class="mb-3 p-3 bg-gray-50 rounded border border-gray-200">
+                                <p class="font-medium mb-1">Условие:</p>
+                                <div class="task-text text-sm text-gray-600 leading-relaxed">${problemTextRendered}</div>
+                            </div>
+                            <div class="mb-2">
+                                <p class="font-medium mb-1">Решение:</p>
+                                <div class="task-text text-gray-700 leading-relaxed">${solutionDisplayContent}</div>
+                            </div>
+                            ${commentsTextRendered && commentsTextRendered.trim() !== '' ? `<div class="mt-3 pt-3 border-t border-gray-200">
+                                <p class="font-medium mb-1">Комментарии:</p>
+                                <div class="task-text text-gray-600 text-sm leading-relaxed">${commentsTextRendered}</div>
+                            </div>` : ''}
+                          </div>`;
+                 html += renderProblemNavigation(problem[COLUMN_NAMES.id], 'solutions');
             }
-            hideLoading(); window.scrollTo(0, 0); 
-        }
-        
-        function updateActiveNavLinks() {
-            const currentHash = window.location.hash || '#home';
-            const navLinks = document.querySelectorAll('header nav a.nav-link');
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentHash.split('?')[0]) {
-                    link.classList.add('active', 'bg-indigo-100', 'text-indigo-800');
-                    link.classList.remove('text-indigo-600');
-                } else {
-                    link.classList.remove('active', 'bg-indigo-100', 'text-indigo-800');
-                    link.classList.add('text-indigo-600');
-                }
-            });
+            document.getElementById('content-area').innerHTML = html;
+            if (window.MathJax?.typeset) window.MathJax.typesetPromise();
         }
 
+        // --- Language and UI Update ---
         function setLanguage(lang) {
             currentLanguage = lang;
-            if (mainTitleElement) mainTitleElement.textContent = currentLanguage === 'ru' ? 'Олимпиадные задачи по математике' : 'Olympiad math problems';
-            document.title = currentLanguage === 'ru' ? 'Олимпиадные задачи по математике' : 'Olympiad math problems';
-            setActiveLanguageButton(); handleRouteChange(); 
-            document.querySelector('footer p').innerHTML = `&copy; ${new Date().getFullYear()} ${currentLanguage === 'ru' ? 'Ваш Сайт Олимпиадных Задач' : 'Your Olympiad Problems Site'}`;
-            const navTexts = currentLanguage === 'ru' ? 
-                { home: "Домой", contents: "Оглавление" } : 
-                { home: "Home", contents: "Table of Contents" };
-            document.querySelector('nav a[href="#home"]').textContent = navTexts.home;
-            document.querySelector('nav a[href="#contents"]').textContent = navTexts.contents;
+            handleRouteChange(); 
+        }
+        
+        function updateMainPageLangButtons() {
+            const langRuButton = document.getElementById('lang-ru-main');
+            const langEnButton = document.getElementById('lang-en-main');
+            if (currentLanguage === 'ru') {
+                langRuButton.classList.add('bg-indigo-500', 'text-white');
+                langRuButton.classList.remove('text-indigo-500');
+                langEnButton.classList.remove('bg-indigo-500', 'text-white');
+                langEnButton.classList.add('text-indigo-500');
+            } else {
+                langEnButton.classList.add('bg-indigo-500', 'text-white');
+                langEnButton.classList.remove('text-indigo-500');
+                langRuButton.classList.remove('bg-indigo-500', 'text-white');
+                langRuButton.classList.add('text-indigo-500');
+            }
         }
 
-        function setActiveLanguageButton() {
-            if (currentLanguage === 'ru') {
+        function updateLanguageUI() {
+            if (!currentSubjectKey) {
+                 renderMainPage();
+                 return;
+            }
+            const subject = SUBJECTS[currentSubjectKey];
+            document.getElementById('main-title').textContent = subject.name[currentLanguage];
+            document.title = subject.name[currentLanguage];
+            document.getElementById('subjects-link').textContent = currentLanguage === 'ru' ? 'Предметы' : 'Subjects';
+            document.getElementById('home-link').textContent = currentLanguage === 'ru' ? 'Домой' : 'Home';
+            document.getElementById('contents-link').textContent = currentLanguage === 'ru' ? 'Оглавление' : 'Table of Contents';
+            
+            const langRuButton = document.getElementById('lang-ru');
+            const langEnButton = document.getElementById('lang-en');
+             if (currentLanguage === 'ru') {
                 langRuButton.classList.add('bg-indigo-500', 'text-white'); langRuButton.classList.remove('text-indigo-500');
                 langEnButton.classList.remove('bg-indigo-500', 'text-white'); langEnButton.classList.add('text-indigo-500');
-                document.documentElement.lang = 'ru';
             } else {
                 langEnButton.classList.add('bg-indigo-500', 'text-white'); langEnButton.classList.remove('text-indigo-500');
                 langRuButton.classList.remove('bg-indigo-500', 'text-white'); langRuButton.classList.add('text-indigo-500');
-                document.documentElement.lang = 'en';
             }
         }
 
-        langRuButton.addEventListener('click', () => setLanguage('ru'));
-        langEnButton.addEventListener('click', () => setLanguage('en'));
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        // --- Routing ---
+        async function handleRouteChange() {
+            const hash = window.location.hash.substring(1); 
+            const [path, queryString] = hash.split('?');
+            const pathParts = path.split('/');
+            const subjectKey = pathParts[0];
+            const page = pathParts[1] || 'home';
+            const params = new URLSearchParams(queryString);
+            
+            if (SUBJECTS[subjectKey]) {
+                const subjectChanged = currentSubjectKey !== subjectKey;
+                currentSubjectKey = subjectKey;
+
+                if (subjectChanged || !document.getElementById('main-title')) {
+                    renderSubjectApp(subjectKey);
+                }
+                
+                const loadingIndicator = document.getElementById('loading-indicator');
+                loadingIndicator.classList.remove('hidden');
+
+                if (subjectChanged || allProblems.length === 0) {
+                    try {
+                        const url = SUBJECTS[subjectKey].googleSheetUrl;
+                        if (url.includes('YOUR_')) throw new Error(`Placeholder URL for ${subjectKey}`);
+                        const csvText = await fetchCsvData(url);
+                        allProblems = parseCsvDataRobust(csvText);
+                        console.log(`Задачи для ${subjectKey} загружены: ${allProblems.length} шт.`);
+                    } catch(e) {
+                         document.getElementById('content-area').innerHTML = `<p class="text-red-500 text-center">Не удалось загрузить данные для предмета "${SUBJECTS[subjectKey].name[currentLanguage]}". Пожалуйста, убедитесь, что таблица опубликована и ссылка на CSV в коде корректна.</p>`;
+                         loadingIndicator.classList.add('hidden');
+                         return;
+                    }
+                }
+                
+                const id = params.get('id');
+                const level = params.get('level');
+                const grade = params.get('grade');
+
+                const contentArea = document.getElementById('content-area');
+                contentArea.innerHTML = ''; // Clear previous content
+
+                if (page === 'home') {
+                    renderSubjectHomePage();
+                } else if (page === 'contents') {
+                    renderSubjectContentsPage();
+                } else if (page === 'problems') {
+                    if (level && grade) {
+                        renderProblemsPage(decodeURIComponent(level), decodeURIComponent(grade), id ? decodeURIComponent(id) : null);
+                    } else {
+                        renderSubjectContentsPage(); // Fallback to contents if params are missing
+                    }
+                } else if (page === 'solutions') {
+                     if (id && level && grade) {
+                        renderSolutionsPage(decodeURIComponent(level), decodeURIComponent(grade), decodeURIComponent(id));
+                     } else {
+                        window.location.hash = `${currentSubjectKey}/contents`; // Fallback
+                     }
+                } else {
+                    renderSubjectHomePage();
+                }
+                
+                updateLanguageUI();
+                if (window.MathJax?.typeset) { MathJax.typesetPromise(); }
+                loadingIndicator.classList.add('hidden');
+
+            } else {
+                currentSubjectKey = null;
+                allProblems = [];
+                currentSectionProblems = [];
+                renderMainPage();
+            }
+        }
+        
+        // --- Init ---
+        window.addEventListener('hashchange', handleRouteChange);
+        document.addEventListener('DOMContentLoaded', handleRouteChange);
+
     </script>
 </body>
 </html>
